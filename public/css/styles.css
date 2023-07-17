@@ -1,0 +1,138 @@
+body{
+    margin: 0;
+}
+#top-header{
+    background-color: gray;
+    padding: 5px;
+    
+}
+#top-header a{
+    text-decoration: none;
+    color: black;
+    font-size: 30px;
+}
+nav a{
+    text-decoration: none;
+    font-size: 20px;
+    color: white;
+}
+nav ul{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: right;
+    column-gap: 30px;
+    background-color: blue;
+    color: black;
+    padding: 7px;
+    margin: 0;
+}
+nav ul li{
+    list-style: none;
+}
+
+/* recepie view styles*/
+h1{
+    margin-left: 3%;
+}
+#recipeCard-container{
+    width: 90%;
+    margin: auto;
+}
+.recipeCard{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 20px;
+    row-gap: 20px;
+    padding: 0;
+    margin: auto;
+}
+.recipeCard img{
+    display: block;
+    width: 100%;
+    height: 350px;
+    margin: auto;
+}
+
+
+.recipeCard li {
+    list-style: none;
+    border: 2px solid black;
+}
+.hero-img img{
+    display: block;
+    width: 100%;
+}
+.hero-img{
+    margin-bottom: 30px;
+}
+.container{
+    display: flex;
+    flex-direction: row;
+    margin: auto;
+    column-gap: 30px;
+    justify-content: center;
+}
+
+.card-1, .card-2, .card-3{
+    width: 30%;
+    height: 400px;
+    background-color: red;
+}
+.container h3{
+    background-color: rgb(93, 93, 206);
+    text-align: center;
+    padding: 5px;
+    margin-top: 0;
+}
+footer{
+    margin-top: 30px;
+    background-color: gray;
+    padding: 10px;
+}
+
+/**recipe detail styles**/
+.detail-list li{
+    list-style: none;
+}
+
+.recipe-container{
+    position: relative;
+}
+.detail-list li{
+    padding-bottom: 7px;
+}
+.imageDetails {
+    z-index: -10;
+    position: absolute;
+    left: 45%;
+    top: 13%;
+}
+.imageDetails img{
+    width: 70%;
+    display: block;
+}
+.photoDetails {
+    z-index: -10;
+    position: absolute;
+    left: 20%;
+    top: -43%;
+}
+.photoDetails img{
+    width: 70%;
+    display: block;
+}
+@media (max-width: 600px) {
+    .recipeCard{
+        grid-template-columns: 1fr;
+ 
+    }
+    .imageDetails,  .photoDetails {
+      
+        left: 60%;
+        
+    }
+    .photoDetails {
+        top: -18%;
+    }
+  
+}
