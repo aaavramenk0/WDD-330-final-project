@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const recipesController = require('../controllers/recipes');
+//const { auth, requiresAuth } = require('express-openid-connect');
+
 
 // Import the appropriate controller
 

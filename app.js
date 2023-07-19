@@ -13,10 +13,22 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const TwitterStrategy = require('passport-twitter').Strategy;
 const User = require('./models/users');
+const { auth, requiresAuth } = require('express-openid-connect');
 require('dotenv').config();
 
 const app = express();
 
+// Oauth code
+const config = {
+  authRequired: false,
+  auth0Logout: true,
+  secret: process.env.SECRET,
+  baseURL: process.env.BASE_URL,
+  clientID: process.env.CLIENT_ID,
+  issuerBaseURL: process.env.ISSUER_BASE_URL,
+};
+// auth router attaches /login, /logout, and /callback routes to the baseURL
+app.use(auth(config));
 
 // Session middleware
 app.use(
@@ -77,7 +89,7 @@ passport.use(
     {
       consumerKey: process.env.consumerKey,
       consumerSecret: process.env.consumerSecret,
-      callbackURL: 'https://localhost:8080/auth/twitter/callback',
+      callbackURL: 'https://recipe-manager-api.onrender.com/auth/twitter/callback',
       profileFields: ['id', 'displayName', 'username', 'email', 'photos'],
     },
     (token, tokenSecret, profile, done) => {
@@ -105,7 +117,7 @@ passport.deserializeUser((id, done) => {
   User.findById(id, (err, user) => {
     done(err, user);
   });
-});
+}); 
 
 // View Engine and Templates
 app.set('view engine', 'ejs');
@@ -116,10 +128,12 @@ app.set('layout', './layouts/layout');
  * Routes
  *************************/
 
+
 // Static Routes
 app.use(staticRoutes);
 
 // Index route
+app.get('*', requiresAuth())
 app.get('/', staticController.buildHome);
 app.use('/views', viewsRoutes);
 // graphql
@@ -132,19 +146,20 @@ app.use(
 )
 
 // Body-parser and URL encoding middleware
-app.use(bodyParser.json());
-app.use(express.urlencoded({ extended: true }));
 
-// CORS headers
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  next();
-});
+app
+  .use(bodyParser.json())
+  .use(express.urlencoded({ extended: true }))
+  .use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    next();
+  })
+  .use('/', require('./routes'));
 
 // Google OAuth login route
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-// Google OAuth callback route
+//  Google OAuth callback route
 app.get(
   '/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/login' }),
@@ -154,7 +169,30 @@ app.get(
   }
 );
 
+// Twitter OAuth login route
+app.get('/auth/twitter', passport.authenticate('twitter'));
+
+// Twitter OAuth callback route
+app.get(
+  '/auth/twitter/callback',
+  passport.authenticate('twitter', { failureRedirect: '/login' }),
+  (req, res) => {
+    // Handle successful authentication
+    res.redirect('/'); // Redirect to the desired page
+  }
+);
+/*app.get('/auth/google', (req, res, next) => {
+  passport.authenticate('google', { scope: ['profile', 'email'] }, (err, user, info) => {
+    // Log the authentication request details
+    console.log('Authentication request:', info);
+
+    // Call the default Passport.js handler
+    next();
+  })(req, res, next);
+});*/
 // Other routes
 app.use('/', require('./routes'));
+app.use('/user', require('./routes/signup')) 
+app.use('/user', require('./routes/login'))
 
 module.exports = app;

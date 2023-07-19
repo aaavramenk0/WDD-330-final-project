@@ -10,7 +10,6 @@ body{
     text-decoration: none;
     color: black;
     font-size: 30px;
-    font-size: clamp(18px, 28px, 40px);
 }
 nav a{
     text-decoration: none;
